@@ -7,6 +7,7 @@ def realPageRank(prGraph, prBlock, start, end):
   
   lis = []
   realLis = []
+  kendalLis = []
   trueSum = 0
   for i in range(start, end + 1):
     lis.append((prBlock.get(str(i))) / prBlock.get(str(start)))
@@ -16,9 +17,21 @@ def realPageRank(prGraph, prBlock, start, end):
   j = 0
   for i in range(start, end + 1):
     realLis.append({str(i):truePageRank * lis[j]})
+    kendalLis.append(truePageRank * lis[j])
     j += 1
+
+  kendalLis = np.array(kendalLis)
   
-  return(realLis)
+  return(realLis, kendalLis)
+
+def fromListToVector(pagerankLis, start, end):
+  
+  lis = []
+  for i in range(start, end + 1):
+    lis.append(pagerankLis.get(str(i)))
+
+  return(np.array(lis))
+
 
 dampFactor = 0.85
 graph = nx.DiGraph()
@@ -45,8 +58,13 @@ graphRed.add_edges_from([('0', '6'), ('0', '4'), ('1', '2'), ('1', '5'),
 prRed = nx.pagerank(graphRed, dampFactor)
 print("Approximate pagerank of red Graph:", prRed)
 
-truePrRed = realPageRank(pr.get('RED'), prRed, 0, 7)
+truePrRed, kendalLisRed = realPageRank(pr.get('RED'), prRed, 0, 7)
 print("Real pagerank of red Graph:", truePrRed)
+
+listRed = fromListToVector(prRed, 0, 7)
+corrRed, _ = kendalltau(listRed, kendalLisRed)
+print('Kendall Rank correlation between reds: %.5f' % corrRed)
+
 print("\n\n")
 
 # green graph
@@ -61,8 +79,13 @@ graphGreen.add_edges_from([('8', '9'), ('8', '14'), ('9', '8'), ('9', '10'),
 prGreen = nx.pagerank(graphGreen, dampFactor)
 print("Approximate pagerank of green Graph:", prGreen)
 
-truePrGreen = realPageRank(pr.get('GREEN'), prGreen, 8, 14)
+truePrGreen, kendalLisGreen = realPageRank(pr.get('GREEN'), prGreen, 8, 14)
 print("Real pagerank of green Graph:", truePrGreen)
+
+listGreen = fromListToVector(prGreen, 8, 14)
+corrGreen, _ = kendalltau(listGreen, kendalLisGreen)
+print('Kendall Rank correlation between greens: %.5f' % corrGreen)
+
 print("\n\n")
 
 # yellow graph
@@ -77,8 +100,13 @@ graphYellow.add_edges_from([('15', '16'), ('15', '21'), ('15', '17'), ('15', '18
 prYellow = nx.pagerank(graphYellow, dampFactor)
 print("Approximate pagerank of yellow Graph:", prYellow)
 
-truePrYellow = realPageRank(pr.get('YELLOW'), prYellow, 15, 22)
+truePrYellow, kendalLisYellow = realPageRank(pr.get('YELLOW'), prYellow, 15, 22)
 print("Real pagerank of yellow Graph:", truePrYellow)
+
+listYellow = fromListToVector(prYellow, 15, 22)
+corrYellow, _ = kendalltau(listYellow, kendalLisYellow)
+print('Kendall Rank correlation between yellows: %.5f' % corrYellow)
+
 print("\n\n")
 
 # blue graph
@@ -94,6 +122,11 @@ graphBlue.add_edges_from([('23', '24'), ('23', '27'), ('23', '30'), ('23', '31')
 prBlue = nx.pagerank(graphBlue, dampFactor)
 print("Approximate pagerank of blue Graph:", prBlue)
 
-truePrBlue = realPageRank(pr.get('BLUE'), prBlue, 23, 31)
+truePrBlue, kendalLisBlue = realPageRank(pr.get('BLUE'), prBlue, 23, 31)
 print("Real pagerank of blue Graph:", truePrBlue)
+
+listBlue = fromListToVector(prBlue, 23, 31)
+corrBlue, _ = kendalltau(listBlue, kendalLisBlue)
+print('Kendall Rank correlation between blues: %.5f' % corrBlue)
+
 print("\n\n")
